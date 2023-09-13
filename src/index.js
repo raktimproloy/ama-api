@@ -7,11 +7,14 @@ const mongoose = require("mongoose")
 
 // import routes 
 const parentsHandler = require("./routes/users/parents")
+const teacherHandler = require("./routes/users/teacher")
+const studentHandler = require("./routes/users/student")
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
+// mongodb setup
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.BASE_URL)
     .then(() => console.log("Database Connected successful"))
@@ -22,6 +25,8 @@ app.use(express.urlencoded({ extended: true }))
 
 // Routes Api
 app.use("/user/parents", parentsHandler)
+app.use("/user/teacher", teacherHandler)
+app.use("/user/student", studentHandler)
 
 
 // default error handler
