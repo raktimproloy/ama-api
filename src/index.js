@@ -14,7 +14,6 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-// mongodb setup
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.BASE_URL)
     .then(() => console.log("Database Connected successful"))
