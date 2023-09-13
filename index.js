@@ -6,9 +6,9 @@ const cors = require("cors")
 const mongoose = require("mongoose")
 
 // import routes 
-const parentsHandler = require("./routes/users/parents")
-const teacherHandler = require("./routes/users/teacher")
-const studentHandler = require("./routes/users/student")
+const parentsHandler = require("./src/routes/users/parents")
+const teacherHandler = require("./src/routes/users/teacher")
+const studentHandler = require("./src/routes/users/student")
 
 const app = express()
 app.use(express.json())
