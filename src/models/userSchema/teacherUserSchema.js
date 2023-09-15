@@ -1,15 +1,12 @@
 const mongoose = require("mongoose")
 
-const parentsUserSchema = mongoose.Schema({
+const teacherUserSchema = mongoose.Schema({
     fullName: {
         type: String,
         required: true
     },
     phone: {
-        type: String
-    },
-    stydentId: {
-        type: String,
+        type: Number
     },
     userType: {
         type: String,
@@ -26,10 +23,16 @@ const parentsUserSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    blogs: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "blog"
+        }
+    ]
 }, {
     timestamps: true
 }) 
 
-const ParentsUser = mongoose.model("parents-user", parentsUserSchema)
-module.exports = ParentsUser;
+const TeacherUser = mongoose.model("teacher-user", teacherUserSchema)
+module.exports = TeacherUser;

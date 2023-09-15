@@ -6,7 +6,7 @@ const studentUserSchema = mongoose.Schema({
         required: true
     },
     phone: {
-        type: String
+        type: Number
     },
     stydentId: {
         type: String,

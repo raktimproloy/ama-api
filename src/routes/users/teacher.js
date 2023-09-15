@@ -2,93 +2,100 @@ const express = require("express")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const router = express.Router()
-const TeacherUser = require("../../models/teacherUserSchema")
+const TeacherUser = require("../../models/userSchema/teacherUserSchema")
+const hashPassword = require("../../middleware/hashPassword")
 
 
 // post api for parent signup
-router.post("/signup", async(req, res) =>{
-    try{
-        const email = req.body.email;
-        if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
-            const teacherUser = await TeacherUser.find({email: email})
+router.post("/signup", hashPassword, async (req, res) => {
+    try {
+      const { userType, email, password, fullName, phone, studentId, address } = req.body;
+  
+      // Input validation
+      if (userType !== "teacher" || !email || !password) {
+        return res.status(400).json({ error: "Invalid requirement" });
+      }
+  
+      if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        return res.status(400).json({ error: "Invalid email!" });
+      }
+  
+      if (password.length < 8) {
+        return res.status(400).json({ error: "Invalid Password! Password must be at least 8 characters long." });
+      }
+  
+      // Check if email is already used
+      const existingUser = await TeacherUser.findOne({ email });
+      if (existingUser) {
+        return res.status(409).json({ error: "Email already used" });
+      }
+  
+      // Hashed password is available in req.hashedPassword due to the middleware
+      const hashedPassword = req.hashedPassword;
+  
+      // Create a new user
+      const newUserData = {
+        fullName,
+        phone,
+        studentId,
+        email,
+        userType: "teacher",
+        address,
+        password: hashedPassword,
+      };
+  
+      const newTeacherUser = new TeacherUser(newUserData);
+      await newTeacherUser.save();
+  
+      res.status(200).json({ message: "Signup Successful" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "There was a server-side problem!" });
+    }
+  });
 
-            if(teacherUser && teacherUser.length > 0){
-                res.status(409).json({error: "Email already used"})
-            }else{
-                const hashedPassword = await bcrypt.hash(req.body.password, 10)
 
-                const fullName = req.body.fullName;
-                const phone = req.body.phone || "";
-                const studentId = req.body.studentId || ""
-                const password = hashedPassword;
-                const userType = "Parents"
-                const address = req.body.address || ""
-
-                const newUserData = {
-                    fullName,
-                    phone,
-                    studentId,
-                    email,
-                    userType,
-                    address,
-                    password,
-                }
-                const newTeacherUser = new TeacherUser(newUserData)
-                newTeacherUser.save()
-                .then((result) => {
-                    res.status(200).json({message: "Signup Successful"})
-                }).catch((err) => {
-                    res.status(500).send({
-                        error: "This is server side error"
-                    })
-                });
-            }
-        }else{
-            res.status(400).json({error: "Invalid email!"})
+  router.post("/login", async (req, res) => {
+    try {
+      // Validate user input
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ error: "Both email and password are required." });
+      }
+  
+      // Check if a user with the given email exists
+      const user = await TeacherUser.findOne({ email });
+  
+      if (!user) {
+        return res.status(401).json({ error: "User not found" });
+      }
+  
+      // Compare the provided password with the hashed password in the database
+      const isValidPassword = await bcrypt.compare(password, user.password);
+  
+      if (!isValidPassword) {
+        return res.status(401).json({ error: "Password not matched" });
+      }
+  
+      // Generate a JWT token
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          userFullName: user.fullName,
+          email: user.email,
+        },
+        process.env.JWT_SECRET, // Use your securely stored JWT secret here
+        {
+          expiresIn: "1h",
         }
-
-    }catch(error){
-        res.status(500).send({
-            error: "There was a server side problem!"
-        })  
+      );
+  
+      // Respond with success
+      res.status(200).json({ token, message: "Login Successful" });
+    } catch (err) {
+      console.error("Login error:", err);
+      res.status(500).json({ error: "Internal server error" });
     }
-})
-
-
-router.post("/login", async (req, res) => {
-    try{
-        const checkTeacherUser = await TeacherUser.find({email: req.body.email})
-        if(checkTeacherUser && checkTeacherUser.length > 0){
-            const isValidPassword = await bcrypt.compare(req.body.password, checkTeacherUser[0].password);
-            if(isValidPassword){
-                console.log("dhuka")
-                const token = jwt.sign({
-                    userId: checkTeacherUser[0]._id,
-                    userFullName: checkTeacherUser[0].fullName,
-                    email: checkTeacherUser[0].email
-                }, process.env.JWT_SECRET, {
-                    expiresIn: "1h"
-                })
-                res.status(200).send({
-                    token: token,
-                    message: "Login Successful"
-                })
-            }else{
-                res.status(401).send({
-                    error: "Password not matched"
-                }) 
-            }
-        }else{
-            res.status(401).send({
-                error: "User not found"
-            })  
-        }
-    }
-    catch(err) {
-        res.status(500).send({
-            error: err.message
-        })
-    }
-})
-
+  });
+  
 module.exports = router
