@@ -35,7 +35,7 @@ app.use("/event", eventHandler)
 // default error handler
 app.use((err, req, res, next) => {
     console.error(err.stack)
-    res.status(500).send('Something broke!')
+    res.status(500).send('Something broken!')
   })
 
 // 404 error handler

@@ -1,41 +1,49 @@
 const express = require("express")
 const Event = require("../../models/eventSchema/eventSchema")
 const TeacherUser = require("../../models/userSchema/teacherUserSchema")
+const checkToken = require("../../middleware/checkToken")
 const router = express.Router();
 
 // Post Blog
-router.post("/post", async (req, res) => {
+router.post("/post", checkToken, async (req, res) => {
     try{
-        const postEvent = new Event({
-            title: req.body.title,
-            description: req.body.description,
-            author: req.body.userId,
-            postedTime: req.body.postedTime
-        })
-        const event = await postEvent.save()
-        
-        await TeacherUser.updateOne({
-            _id: req.body.userId
-        }, {
-            $push: {
-                events: event._id
-            }
-        })
-        .then(response => {
-            res.status(200).send({
-                message: "Successful"
+        console.log(req.userType)
+        if(req.userType === "teacher" || req.userType === "admin"){
+            const postEvent = new Event({
+                title: req.body.title,
+                description: req.body.description,
+                author: req.userId,
+                postedTime: req.body.postedTime
             })
-        })
-        .catch(err => {
-            res.status(500).send({
-                error: "This is server side error",
-                message: err.message
+            const event = await postEvent.save()
+            
+            await TeacherUser.updateOne({
+                _id: req.body.userId
+            }, {
+                $push: {
+                    events: event._id
+                }
             })
-        })
+            .then(response => {
+                res.status(200).send({
+                    message: "Successful"
+                })
+            })
+            .catch(err => {
+                res.status(500).send({
+                    error: "Could not post!",
+                    message: err.message
+                })
+            })
+        }else{
+            res.status(400).send({
+                error: "Authorization Faild"
+            })
+        }
     }
     catch(err){
         res.status(500).send({
-            error: "This is server side error"
+            error: "This is server side error!"
         })
     }
 })

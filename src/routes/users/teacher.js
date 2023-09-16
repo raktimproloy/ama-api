@@ -77,12 +77,14 @@ router.post("/signup", hashPassword, async (req, res) => {
         return res.status(401).json({ error: "Password not matched" });
       }
   
+
       // Generate a JWT token
       const token = jwt.sign(
         {
           userId: user._id,
-          userFullName: user.fullName,
+          fullName: user.fullName,
           email: user.email,
+          userType: user.email === "sudipto@gmail.com" ? "admin" : "teacher"
         },
         process.env.JWT_SECRET, // Use your securely stored JWT secret here
         {

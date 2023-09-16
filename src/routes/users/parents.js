@@ -81,8 +81,9 @@ router.post("/signup", hashPassword, async (req, res) => {
       const token = jwt.sign(
         {
           userId: user._id,
-          userFullName: user.fullName,
+          fullName: user.fullName,
           email: user.email,
+          userType: "parent"
         },
         process.env.JWT_SECRET, // Use your securely stored JWT secret here
         {
