@@ -93,9 +93,7 @@ router.get("/view/all",  async(req, res) => {
     try{
         const events = Event.find()
             .then((data) => {
-                res.status(200).json({
-                    resutl: data
-                })
+                res.status(200).send(data)
             })
             .catch(err => {
                 res.status(500).json({
