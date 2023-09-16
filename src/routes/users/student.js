@@ -12,8 +12,8 @@ router.post("/signup", hashPassword, async (req, res) => {
       const { userType, email, password, fullName, phone, studentId, address } = req.body;
   
       // Input validation
-      if (userType !== "student" || !email || !password) {
-        return res.status(400).json({ error: "Invalid requirement" });
+      if (userType !== "student" || !email || !password || !fullName) {
+        return res.status(400).json({ error: "Requirement not completed!" });
       }
   
       if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {

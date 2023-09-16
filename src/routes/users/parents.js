@@ -12,7 +12,7 @@ router.post("/signup", hashPassword, async (req, res) => {
       const { userType, email, password, fullName, phone, studentId, address } = req.body;
   
       // Input validation
-      if (userType !== "parents" || !email || !password) {
+      if (userType !== "parent" || !email || !password) {
         return res.status(400).json({ error: "Invalid requirement" });
       }
   
@@ -39,7 +39,7 @@ router.post("/signup", hashPassword, async (req, res) => {
         phone,
         studentId,
         email,
-        userType: "Parents", 
+        userType: "Parent", 
         address,
         password: hashedPassword,
       };

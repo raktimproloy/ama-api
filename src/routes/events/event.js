@@ -73,19 +73,6 @@ router.delete("/delete/:id", async (req, res) => {
     }
 })
 
-// router.get("/author/:id", async (req, res) => {
-//     try{
-//         const user = await User.find({_id: req.params.id}).select({
-//             __v: 0,
-//             password: 0
-//         })
-//         res.status(200).json(user)
-//     }
-//     catch(err){
-//         res.status(500).json(err)
-//     }
-// })
-
 // Get Blog By id
 
 router.get("/:id", async (req, res) => {
