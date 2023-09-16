@@ -10,6 +10,7 @@ const parentsHandler = require("./src/routes/users/parents")
 const teacherHandler = require("./src/routes/users/teacher")
 const studentHandler = require("./src/routes/users/student")
 const blogHandler = require("./src/routes/blogs/blog")
+const eventHandler = require("./src/routes/events/event")
 
 const app = express()
 app.use(express.json())
@@ -28,6 +29,7 @@ app.use("/user/parents", parentsHandler)
 app.use("/user/teacher", teacherHandler)
 app.use("/user/student", studentHandler)
 app.use("/blog", blogHandler)
+app.use("/event", eventHandler)
 
 
 // default error handler

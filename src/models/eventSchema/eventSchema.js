@@ -1,12 +1,9 @@
 const mongoose = require("mongoose")
 
-const blogSchema = mongoose.Schema({
+const EventSchema = mongoose.Schema({
     title: {
         type: String,
         required: true
-    },
-    blogImage: {
-        type: String
     },
     description: {
         type: String,
@@ -21,5 +18,5 @@ const blogSchema = mongoose.Schema({
     },
 })
 
-const Blog = mongoose.model("blog", blogSchema)
-module.exports = Blog
+const Event = mongoose.model("event", EventSchema)
+module.exports = Event

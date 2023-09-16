@@ -6,7 +6,7 @@ const teacherUserSchema = mongoose.Schema({
         required: true
     },
     phone: {
-        type: Number
+        type: String
     },
     userType: {
         type: String,
@@ -29,7 +29,13 @@ const teacherUserSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "blog"
         }
-    ]
+    ],
+    events: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "blog"
+        }
+    ],
 }, {
     timestamps: true
 }) 

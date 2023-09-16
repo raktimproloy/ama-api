@@ -6,7 +6,7 @@ const parentsUserSchema = mongoose.Schema({
         required: true
     },
     phone: {
-        type: Number
+        type: String
     },
     stydentId: {
         type: String,
